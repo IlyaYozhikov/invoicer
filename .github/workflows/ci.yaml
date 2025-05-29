@@ -1,4 +1,4 @@
-name: Deploy to Ubuntu
+name: Deploy to Ubuntu Server
 
 on:
   push:
@@ -11,18 +11,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Вариант 1 (рекомендуется)
-      - name: Add SSH Key
-        uses: webfactory/ssh-agent@v0.7.0
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: "optional"
-
-      - name: Deploy to Server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
             cd /home/ilya/invoicer
             git pull origin main
             docker-compose down
             docker-compose up -d --build
-          "
