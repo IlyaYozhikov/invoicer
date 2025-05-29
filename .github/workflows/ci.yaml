@@ -12,14 +12,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Add SSH Key
-        uses: shimataro/ssh-key-action@v2
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Update Files on Ubuntu
-        run:
+      - name: Deploy to Ubuntu
+        run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-            cd /путь/к/проекту
+            cd /home/ilya/invoicer
             git pull origin main
             docker-compose up -d --build
           "
