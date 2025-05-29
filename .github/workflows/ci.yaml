@@ -12,12 +12,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Add SSH Key
-        uses: webfactory/ssh-agent@v0.7.0
+        uses: shimataro/ssh-key-action@v2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Deploy to Ubuntu
-        run: |
+      - name: Update Files on Ubuntu
+        run:
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /home/ilya/invoicer
             git pull origin main
