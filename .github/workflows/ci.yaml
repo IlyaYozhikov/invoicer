@@ -1,0 +1,32 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
+        
+    - name: Build
+      run: go build -v ./...
+      
+    - name: Test
+      run: go test -v ./...
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v3
+      with:
+        push: true
+        tags: yourusername/invoicer:latest
+        secrets: ${{ secrets.DOCKER_HUB_TOKEN }}
