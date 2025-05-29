@@ -1,4 +1,4 @@
-name: Sync to Ubuntu Server
+name: Deploy to Ubuntu
 
 on:
   push:
@@ -11,15 +11,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Вариант 1 (рекомендуется)
       - name: Add SSH Key
-        uses: shimataro/ssh-key-action@v2
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: "optional"
 
-      - name: Update Files on Ubuntu
-        run:
+      - name: Deploy to Server
+        run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /home/ilya/invoicer
             git pull origin main
+            docker-compose down
             docker-compose up -d --build
           "
